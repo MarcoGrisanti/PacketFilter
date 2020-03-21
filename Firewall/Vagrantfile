@@ -1,0 +1,23 @@
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "ubuntu/trusty64"
+
+  config.vm.network "private_network", ip: "10.0.0.20", virtualbox__intnet: "myNetwork1"
+  config.vm.network "private_network", ip: "100.0.0.20", virtualbox__intnet: "myNetwork2"
+
+  config.vm.synced_folder "SharedFolder", "/SharedFolder/", create: true
+
+  config.vm.provider "virtualbox" do |vb|
+  	vb.gui = false
+    vb.memory = "1024"
+    vb.cpus = 1
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+      apt update
+      apt install -y net-tools
+      apt install -y openjdk-7-jdk
+      ip link set dev eth2 up
+    SHELL
+
+end
